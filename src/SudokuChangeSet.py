@@ -11,13 +11,10 @@ class SudokuChangeSet:
 
     def add_many(self, changes):
         self._changes = [ *changes, *self._changes]
+
     def add_changeset(self, changeset):
         self._changes = [ *changeset._changes, *self._changes]
 
-    def apply(self, map):
-        for change in self._changes:
-            if self.debug: print(f'applying:{change}')  
-            change.apply(map)
         
 
 class SudokuChange:
@@ -43,20 +40,6 @@ class SudokuChange:
             return f'({self.y},{self.x}).remove({self.removals})'
            
            
-    def apply(self, map):
-        
-        if self.value is not None:
-            map[self.y][self.x]=self.value
-   
-        if self.removal is not None:
-            if self.removal in map[self.y][self.x]:
-                map[self.y][self.x].remove(self.removal)
-      
-        if self.removals is not None:
-            for value in self.removals:
-                if value in map[self.y][self.x]:
-                    map[self.y][self.x].remove(value)
-      
         
    
         

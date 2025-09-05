@@ -20,6 +20,26 @@ class SudokuMap:
         self._initialize_possibilities()
 
 
+    def apply(self, changeset):
+        for change in changeset._changes:
+            if self.debug: print(f'applying:{change}')  
+            self._apply_change(change)
+
+
+    def _apply_change(self, change):        
+        if change.value is not None:
+            self.possibilities[change.y][change.x]=change.value
+
+        if change.removal is not None:
+            if change.removal in self.possibilities[change.y][change.x]:
+                self.possibilities[change.y][change.x].remove(change.removal)
+
+        if change.removals is not None:
+            for value in change.removals:
+                if value in self.possibilities[change.y][change.x]:
+                    self.possibilities[change.y][change.x].remove(value)
+
+
     def _initialize_possibilities(self):
         """Populate initial possibilities for each cell."""
         for y in range(9):
@@ -70,7 +90,7 @@ class SudokuMap:
                 if not changes:
                     done = True
                 else: 
-                    changes.apply(self.possibilities)
+                    self.apply(changes)
                     run_again = True
                     
             done = False
@@ -79,7 +99,7 @@ class SudokuMap:
                 if not changes:
                     done = True
                 else: 
-                    changes.apply(self.possibilities)
+                    self.apply(changes)
                     run_again = True
                     
             done = False
@@ -88,7 +108,7 @@ class SudokuMap:
                 if not changes:
                     done = True
                 else: 
-                    changes.apply(self.possibilities)
+                    self.apply(changes)
                     run_again = True
                     
 

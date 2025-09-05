@@ -80,14 +80,45 @@ def test_initialization(easy_puzzle):
         for cell in row:
             assert len(cell) >= 1 and cell[0] != 0
 
+def assert_is_expected(map, expected_map):
+    for y in range(9):
+        for x in range(9):
+            assert map[y][x]==expected_map[y][x]
 
 def test_reduce(easy_puzzle):
-    sudoku = SudokuMap(easy_puzzle)
-    # verify all cells have possibilities (non zero values)
-    # sudoku.reduce()
-    for row in sudoku.possibilities:
-        for cell in row:
-            assert len(cell) >= 1 and cell[0] != 0
-
-
-
+    sudoku = SudokuMap(easy_puzzle)    
+    expected_state = [
+        [[4], [3, 9], [2, 9], [5], [2, 6, 9], [1], [2, 3, 6, 7], [2, 3, 6, 9], [8]],
+        [[2, 5, 9], [1, 5, 9], [7], [3], [8], [2, 9], [4], [2, 5, 6, 9], [2, 5, 6]],
+        [[2, 3, 5, 9], [6], [2, 5, 8, 9], [4], [2, 9], [7], [2, 3], [2, 3, 5, 9], [1]],
+        [[7], [3, 5, 8], [5, 8], [6, 8], [2, 3, 4, 5, 6], [2, 3, 5], [9], [1], [2, 4, 6]],
+        [[1], [3, 8, 9], [6], [8, 9], [2, 3, 4, 9], [2, 3, 9], [5], [2, 4, 8], [7]],
+        [[5, 9], [2], [4], [1, 6, 8, 9], [5, 6, 7, 9], [5, 9], [6], [6, 8], [3]],
+        [[8], [1, 4, 5, 9], [1, 5, 9], [2], [3, 5, 9], [6], [1, 3], [7], [4, 5]],
+        [[2, 5, 9], [5, 7, 9], [3], [9], [1], [4], [8], [2, 5, 6], [2, 5, 6]],
+        [[6], [1, 4, 5], [1, 2, 5], [7], [3, 5], [8], [1, 2, 3], [2, 3, 4, 5], [9]]
+    ]
+    assert_is_expected(sudoku.possibilities, expected_state)
+    
+    done = False
+    while not done:
+        changes = sudoku.are_unique()
+        if len(changes)==0:
+            done = True
+        else: 
+            sudoku.apply(changes)
+        
+    expected_state = [
+        [[4]         , [9]          , [2, 9]       , [5]          , [ 6, ]          , [1]       , [ 7]         , [3]           ,  [8]       ] ,
+        [[2, 5, 9]   , [1]          , [7]          , [3]          , [8]             , [2, 9]    , [4]          , [2, 5, 6, 9]  , [2, 5, 6] ] ,
+        [[      3]   , [6]          , [8]          , [4]          , [2, 9]          , [7]       , [2]          , [2, 5, 9]     , [1]       ] ,
+        
+        [[7]         , [3, 5, 8]    , [5, 8]       , [6, 8]       , [2, 3, 4, 5, 6] , [2, 3, 5] , [9]          , [1]          , [2, 4, 6] ] ,
+        [[1]         , [3, 8, 9]    , [6]          , [8, 9]       , [2, 3, 4, 9]    , [2, 3, 9] , [5]          , [2, 4, 8]    , [7]       ] ,
+        [[5, 9]      , [2]          , [4]          , [1, 6, 8, 9] , [5, 6, 7, 9]    , [5, 9]    , [6]          , [6, 8]       , [3]       ] ,
+        
+        [[8]         , [1, 4, 5, 9] ,  [1, 5, 9]   , [2]          , [3, 5, 9]       , [6]       , [1, 3]       , [7]          , [4, 5]    ] ,
+        [[2, 5, 9]   , [5, 7, 9]    , [3]          , [9]          , [1]             , [4]       , [8]          , [2, 5, 6]    , [2, 5, 6] ] ,
+        [[6]         , [1, 4, 5]    , [1, 2, 5]    , [7]          , [3, 5]          , [8]       , [1, 2, 3]    , [2, 3, 4, 5] , [9]       ]
+    ]
+    assert_is_expected(sudoku.possibilities, expected_state)

@@ -2,17 +2,12 @@
 name: Sync to S3
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
-      - main  # or your default branch name
+      - main 
 
 jobs:
-  sync-to-s3:
-    # Only run if PR was merged (not just closed)
-    if: github.event.pull_request.merged == true
-    
+  sync-to-s3:    
     runs-on: ubuntu-latest
     
     permissions:

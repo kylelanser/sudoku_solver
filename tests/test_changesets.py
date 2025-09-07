@@ -85,6 +85,8 @@ def assert_is_expected(map, expected_map):
         for x in range(9):
             assert map[y][x]==expected_map[y][x]
 
+# Write test to test the map initialization.
+
 # def test_reduce(easy_puzzle):
 #     initial_state = [
 #         [1,2,3,0,4,5,6,7,8,9],

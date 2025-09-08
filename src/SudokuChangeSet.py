@@ -1,23 +1,5 @@
 class SudokuChangeSet:
-    def __init__(self, ):
-        self._changes = []
-        self.debug = False
-
-    def __bool__(self):
-        return len(self._changes)>0
-
-    def add(self, change):
-        self._changes.append(change)
-
-    def add_many(self, changes):
-        self._changes = [ *changes, *self._changes]
-
-    def add_changeset(self, changeset):
-        self._changes = [ *changeset._changes, *self._changes]
-
-        
-
-class SudokuChange:
+ 
     def __init__(self, y, x, new_value=None, remove_value=None, remove_values=None):
         """
         Initialize SudokuMap with a puzzle (9x9 grid).
@@ -40,6 +22,27 @@ class SudokuChange:
             return f'({self.y},{self.x}).remove({self.removals})'
            
            
+    def apply(self, map):
+        
+        if self.value is not None:
+            map[self.y][self.x]=self.value
+   
+        if self.removal is not None:
+            if self.debug: print(self)
+            if self.debug: print(f'map:{map[self.y][self.x]}, {self.removal}')
+            if self.removal in map[self.y][self.x]:
+                if len(map[self.y][self.x])==1:
+                  print(f'error!')
+                  print(f'map:{map[self.y][self.x]}, {self.removal}')
+                map[self.y][self.x].remove(self.removal)
+      
+        if self.removals is not None:
+            if self.debug: print(self)
+            if self.debug: print(f'map:{map[self.y][self.x]}, {self.removals}')
+            for value in self.removals:
+                if value in map[self.y][self.x]:
+                    map[self.y][self.x].remove(value)
+      
         
    
         

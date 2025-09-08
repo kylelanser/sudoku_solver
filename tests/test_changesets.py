@@ -1,7 +1,21 @@
 import pytest
 from src.SudokuMap import SudokuMap
 
-
+@pytest.fixture
+def initial_state():
+    return [
+         [ 3,0,0,0,4,7,9,1,0 ],
+         [ 0,0,1,0,0,0,0,0,7 ],
+         [ 6,0,7,2,0,1,0,8,0 ],     
+         [ 0,6,2,0,7,0,0,0,9 ],
+         [ 0,0,0,4,0,6,0,0,0 ],
+         [ 7,0,0,0,1,0,3,5,0 ],       
+         [ 0,1,0,7,0,3,5,0,4 ],
+         [ 4,0,0,0,0,0,7,0,0 ],
+         [ 0,7,3,5,6,0,0,0,1 ]    
+     ]
+    
+     
 @pytest.fixture
 def easy_puzzle():
     return [ 
@@ -73,13 +87,6 @@ def hard_puzzle():
     ]
 
 
-def test_initialization(easy_puzzle):
-    sudoku = SudokuMap(easy_puzzle)
-    # verify all cells have possibilities (non zero values)
-    for row in sudoku.possibilities:
-        for cell in row:
-            assert len(cell) >= 1 and cell[0] != 0
-
 def assert_is_expected(map, expected_map):
     for y in range(9):
         for x in range(9):
@@ -87,19 +94,38 @@ def assert_is_expected(map, expected_map):
 
 # Write test to test the map initialization.
 
-# def test_reduce(easy_puzzle):
-#     initial_state = [
-#         [1,2,3,0,4,5,6,7,8,9],
-#         [2,1,0,3,4,5,6,7,8,9],
-#         [3,0,1,2,4,5,6,7,8,9],
-#         [0,3,2,1,4,5,6,7,8,9]
-#     ]
-#     sudoku = SudokuMap(initial_state)    
-#     expected_state = [
-#         [1,2,3,[4,5,6,7,8,9]],
-#         [2,1,[4,5,6,7,8,9],3],
-#         [3,[4,5,6,7,8,9],1,2],
-#         [[4,5,6,7,8,9],3,2,1]
-#     ]
-#     assert_is_expected(initial_state, expected_state)
+def test_initialization(initial_state):
+    
+    expected_state = [
+         [ [3],[ 2,5,8 ],[ 5,8 ],[ 6,8 ],[4],[7],[9],[1],[ 2,5,6 ] ],
+         [ [ 2,5,8,9 ],[ 2,4,5,8,9 ],[1],[ 3,6,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[ 2,4,6 ],[ 2,3,4,6 ],[7] ],
+         [ [6],[ 4,5,9 ],[7],[2],[ 3,5,9 ],[1],[ 4 ],[8],[ 3,5 ] ],     
+         [ [ 1,5,8 ],[6],[2],[ 3,8 ],[7],[ 5,8 ],[ 1,4,8 ],[ 4 ],[9] ],
+         [ [ 1,5,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[4],[ 2,3,5,8,9 ],[6],[ 1,2,8 ],[ 2,7 ],[ 2,8 ] ],
+         [ [7],[ 4,8,9 ],[ 4,8,9 ],[ 8,9 ],[1],[ 2,8,9 ],[3],[5],[ 2,6,8 ] ],       
+         [ [ 2,8,9 ],[1],[ 6,8,9 ],[7],[ 2,8,9 ],[3],[5],[ 2,6,9 ],[4] ],
+         [ [4],[ 2,5,8,9 ],[ 5,6,8,9 ],[ 1,8,9 ],[ 2,8,9 ],[ 2,8,9 ],[7],[ 2,3,6,9 ],[ 2,3,6,8 ] ],
+         [ [ 2,8,9 ],[7],[3],[5],[6],[ 2,4,8,9 ],[ 2,8 ],[ 2,9 ],[1] ]    
+     ]
+    sudoku = SudokuMap(initial_state)    
+     
+    assert_is_expected(sudoku.possibilities, expected_state)
+
+
+def test_solve_unique(initial_state):
+    
+    expected_state = [
+         [ [3],[ 2,5,8 ],[ 5,8 ],[ 6,8 ],[4],[7],[9],[1],[ 2,5 ] ],
+         [ [ 2,5,8,9 ],[ 2,4,5,8,9 ],[1],[ 6,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[ 2,4,6 ],[ 2,3,4,6 ],[7] ],
+         [ [6],[ 4,5,9 ],[7],[2],[ 3,5,9 ],[1],[ 4 ],[8],[ 3,5 ] ],     
+         [ [ 1,5,8 ],[6],[2],[ 3,8 ],[7],[ 5,8 ],[ 1,4,8 ],[ 4 ],[9] ],
+         [ [ 1,5,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[4],[ 2,5,8,9 ],[6],[ 1,2,8 ],[ 2,7 ],[ 2,8 ] ],
+         [ [7],[ 8,9 ],[ 4,8,9 ],[ 8,9 ],[1],[ 2,8,9 ],[3],[5],[ 2,6,8 ] ],       
+         [ [ 2,8,9 ],[1],[ 6,8,9 ],[7],[ 2,8,9 ],[3],[5],[ 2,6,9 ],[4] ],
+         [ [4],[ 2,5,8,9 ],[ 5,6,8,9 ],[ 1,8,9 ],[ 2,8,9 ],[ 2,8,9 ],[7],[ 2,3,6,9 ],[ 2,3,8 ] ],
+         [ [ 2,8,9 ],[7],[3],[5],[6],[ 2,4,8,9 ],[ 2,8 ],[ 2,9 ],[1] ]    
+     ]
+    sudoku = SudokuMap(initial_state)    
+    sudoku.solve_unique() 
+    assert_is_expected(sudoku.possibilities, expected_state)
     

@@ -90,6 +90,8 @@ def hard_puzzle():
 def assert_is_expected(map, expected_map):
     for y in range(9):
         for x in range(9):
+            if map[y][x]!=expected_map[y][x]:
+                print(f'{y},{x},{map[y][x]}')
             assert map[y][x]==expected_map[y][x]
 
 # Write test to test the map initialization.
@@ -115,17 +117,87 @@ def test_initialization(initial_state):
 def test_solve_unique(initial_state):
     
     expected_state = [
-         [ [3],[ 2,5,8 ],[ 5,8 ],[ 6,8 ],[4],[7],[9],[1],[ 2,5 ] ],
-         [ [ 2,5,8,9 ],[ 2,4,5,8,9 ],[1],[ 6,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[ 2,4,6 ],[ 2,3,4,6 ],[7] ],
+         [ [3],[ 2,5,8 ],[ 5,8 ],[ 6,8 ],[4],[7],[9],[1],[ 2,5,6 ] ],
+         [ [ 2,5,8,9 ],[ 2,4,5,8,9 ],[1],[ 3,6,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[ 6 ],[ 2,3,4,6 ],[7] ],
          [ [6],[ 4,5,9 ],[7],[2],[ 3,5,9 ],[1],[ 4 ],[8],[ 3,5 ] ],     
-         [ [ 1,5,8 ],[6],[2],[ 3,8 ],[7],[ 5,8 ],[ 1,4,8 ],[ 4 ],[9] ],
-         [ [ 1,5,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[4],[ 2,5,8,9 ],[6],[ 1,2,8 ],[ 2,7 ],[ 2,8 ] ],
-         [ [7],[ 8,9 ],[ 4,8,9 ],[ 8,9 ],[1],[ 2,8,9 ],[3],[5],[ 2,6,8 ] ],       
+         [ [ 1,5,8 ],[6],[2],[ 3 ],[7],[ 5,8 ],[ 1,4,8 ],[ 4 ],[9] ],
+         [ [ 1,5,8,9 ],[ 3 ],[ 5,8,9 ],[4],[ 2,3,5,8,9 ],[6],[ 1,2,8 ],[ 7 ],[ 2,8 ] ],
+         [ [7],[ 4,8,9 ],[ 4 ],[ 8,9 ],[1],[ 2 ],[3],[5],[ 6 ] ],       
          [ [ 2,8,9 ],[1],[ 6,8,9 ],[7],[ 2,8,9 ],[3],[5],[ 2,6,9 ],[4] ],
-         [ [4],[ 2,5,8,9 ],[ 5,6,8,9 ],[ 1,8,9 ],[ 2,8,9 ],[ 2,8,9 ],[7],[ 2,3,6,9 ],[ 2,3,8 ] ],
-         [ [ 2,8,9 ],[7],[3],[5],[6],[ 2,4,8,9 ],[ 2,8 ],[ 2,9 ],[1] ]    
+         [ [4],[ 2,5,8,9 ],[ 5,6,8,9 ],[ 1 ],[ 2,8,9 ],[ 2,8,9 ],[7],[ 2,3,6,9 ],[ 2,3,6,8 ] ],
+         [ [ 2,8,9 ],[7],[3],[5],[6],[ 4 ],[ 2,8 ],[ 2,9 ],[1] ]    
+     ]
+    sudoku = SudokuMap(initial_state)   
+    sudoku.solve_pattern(sudoku.are_unique) 
+    assert_is_expected(sudoku.possibilities, expected_state)
+    
+
+def test_clear_singles(initial_state):
+    
+    expected_state = [
+         [ [3],[ 2,5,8 ],[ 5,8 ],[ 6,8 ],[4],[7],[9],[1],[ 2,5,6 ] ],
+         [ [ 2,5,8,9 ],[ 2,4,5,8,9 ],[1],[ 3,6,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[ 6 ],[ 2,3,4,6 ],[7] ],
+         [ [6],[ 4,5,9 ],[7],[2],[ 3,5,9 ],[1],[ 4 ],[8],[ 3,5 ] ],     
+         [ [ 1,5,8 ],[6],[2],[ 3 ],[7],[ 5,8 ],[ 1,4,8 ],[ 4 ],[9] ],
+         [ [ 1,5,8,9 ],[ 3 ],[ 5,8,9 ],[4],[ 2,3,5,8,9 ],[6],[ 1,2,8 ],[ 7 ],[ 2,8 ] ],
+         [ [7],[ 4,8,9 ],[ 4 ],[ 8,9 ],[1],[ 2 ],[3],[5],[ 6 ] ],       
+         [ [ 2,8,9 ],[1],[ 6,8,9 ],[7],[ 2,8,9 ],[3],[5],[ 2,6,9 ],[4] ],
+         [ [4],[ 2,5,8,9 ],[ 5,6,8,9 ],[ 1 ],[ 2,8,9 ],[ 2,8,9 ],[7],[ 2,3,6,9 ],[ 2,3,6,8 ] ],
+         [ [ 2,8,9 ],[7],[3],[5],[6],[ 4 ],[ 2,8 ],[ 2,9 ],[1] ]    
      ]
     sudoku = SudokuMap(initial_state)    
-    sudoku.solve_unique() 
+    run_again = True
+    count = 1
+
+    while run_again:
+        print(f"round: {count}")
+        count += 1
+        run_again = False
+        
+        found_changes = sudoku.solve_pattern(sudoku.are_unique)
+        if found_changes:
+            run_again = True
+
+        found_changes = sudoku.solve_pattern(sudoku.clear_singles)
+        if found_changes:
+            run_again = True
+                
+    assert_is_expected(sudoku.possibilities, expected_state)
+    
+
+def test_clear_sets(initial_state):
+    
+    expected_state = [
+         [ [3],[ 2,5,8 ],[ 5,8 ],[ 6,8 ],[4],[7],[9],[1],[ 2,5,6 ] ],
+         [ [ 2,5,8,9 ],[ 2,4,5,8,9 ],[1],[ 3,6,8,9 ],[ 3,5,8,9 ],[ 5,8,9 ],[ 6 ],[ 2,3,4,6 ],[7] ],
+         [ [6],[ 4,5,9 ],[7],[2],[ 3,5,9 ],[1],[ 4 ],[8],[ 3,5 ] ],     
+         [ [ 1,5,8 ],[6],[2],[ 3 ],[7],[ 5,8 ],[ 1,4,8 ],[ 4 ],[9] ],
+         [ [ 1,5,8,9 ],[ 3 ],[ 5,8,9 ],[4],[ 2,3,5,8,9 ],[6],[ 1,2,8 ],[ 7 ],[ 2,8 ] ],
+         [ [7],[ 4,8,9 ],[ 4 ],[ 8,9 ],[1],[ 2 ],[3],[5],[ 6 ] ],       
+         [ [ 2,8,9 ],[1],[ 6,8,9 ],[7],[ 2,8,9 ],[3],[5],[ 2,6,9 ],[4] ],
+         [ [4],[ 2,5,8,9 ],[ 5,6,8,9 ],[ 1 ],[ 2,8,9 ],[ 2,8,9 ],[7],[ 2,3,6,9 ],[ 2,3,6,8 ] ],
+         [ [ 2,8,9 ],[7],[3],[5],[6],[ 4 ],[ 2,8 ],[ 2,9 ],[1] ]    
+     ]
+    sudoku = SudokuMap(initial_state)      
+    run_again = True
+    count = 1
+
+    while run_again:
+        print(f"round: {count}")
+        count += 1
+        run_again = False
+        
+        found_changes = sudoku.solve_pattern(sudoku.are_unique)
+        if found_changes:
+            run_again = True
+
+        found_changes = sudoku.solve_pattern(sudoku.clear_singles)
+        if found_changes:
+            run_again = True
+                
+        found_changes = sudoku.solve_pattern(sudoku.clear_sets)
+        if found_changes:
+            run_again = True
+                
     assert_is_expected(sudoku.possibilities, expected_state)
     
